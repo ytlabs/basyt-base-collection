@@ -252,7 +252,7 @@ function BasytBaseCollection(config) {
             relation = {
                 field: field,
                 entity: properties.entity,
-                foreign: properties.foreign || defaultIdField,
+                foreign: properties.foreign,
                 required: properties.required,
                 role: properties.role || field + '_collection',
                 visible: properties.visible,
