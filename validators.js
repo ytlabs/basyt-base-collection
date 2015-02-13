@@ -15,7 +15,7 @@ var _ = require('lodash'),
             //json is not object. it is serialized object.
             if (_.isUndefined(x)) return false;
             try {
-                JSON.stringify(x);
+                JSON.parse(x);
             }
             catch (err) {
                 return false;
@@ -32,7 +32,6 @@ var _ = require('lodash'),
         },
         'after': validator.isAfter,
         'before': validator.isBefore,
-        'equals': validator.equals,
         'contains': validator.contains,
         'notContains': function (x, str) {
             return !validator.contains(x, str);
@@ -48,14 +47,6 @@ var _ = require('lodash'),
         'min': function (x, val) {
             var number = parseFloat(x);
             return isNaN(number) || number >= val;
-        },
-        'greaterThan': function (x, val) {
-            var number = parseFloat(x);
-            return isNaN(number) || number > val;
-        },
-        'lessThan': function (x, val) {
-            var number = parseFloat(x);
-            return isNaN(number) || number < val;
         },
         'regex': function (x, regex) {
             return validator.matches(x, regex);

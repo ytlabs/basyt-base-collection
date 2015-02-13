@@ -10,7 +10,7 @@ module.exports = BasytBaseCollection;
 
 //validation properties
 var flagValidators = ['notNull'];
-var helperValidators = ['maxLength', 'minLength', 'contains', 'notContains', 'in', 'notIn', 'max', 'min', 'greaterThan', 'lessThan', 'minLength', 'maxLength', 'regex', 'notRegex', 'after', 'before', 'equals'];
+var helperValidators = ['maxLength', 'minLength', 'contains', 'notContains', 'in', 'notIn', 'max', 'min', 'minLength', 'maxLength', 'regex', 'notRegex', 'after', 'before'];
 
 
 function BasytBaseCollection(config) {
@@ -254,7 +254,7 @@ function BasytBaseCollection(config) {
                 entity: properties.entity,
                 foreign: properties.foreign,
                 required: properties.required,
-                role: properties.role || field + '_collection',
+                role: properties.role || properties.entity + '_collection', //TODO there may be more than one relation without role name
                 visible: properties.visible,
                 isArray: (properties.type === 'array'),
                 transfer: properties.transfer
@@ -303,13 +303,19 @@ BasytBaseCollection.prototype = {
         });
         return valid;
     },
-    validateStrict: function (value, param, model, field) {
+    validateStrict: function (value, param, model) {
         //param contains model field names
-        return _.isDefined(param[field]);
+        var valid;
+        _.forOwn(model, function(v, field){
+            valid = param.indexOf(field) > -1;
+            return valid;
+        })
+        return valid;
     },
     //collection methods
     create: function base_collection_create(_entity) {
-        return Promise.resolve(_entity).bind(this)
+        var entity = _.cloneDeep(_entity);
+        return Promise.resolve(entity).bind(this)
             .then(this.adapter.validateEntity)
             .then(this.beforeCreate)
             .spread(this.beforeSave)
@@ -317,13 +323,15 @@ BasytBaseCollection.prototype = {
             .spread(this.afterCreate);
     },
     read: function base_collection_read(_query, _options) {
-        return Promise.resolve([_query, _options]).bind(this)
+        var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
             .spread(this.beforeRead)
             .spread(this.adapter.read);
     },
     update: function base_collection_update(_query, _update, _options) {
-        return Promise.resolve([_query, _update, _options]).bind(this)
+        var query = _.cloneDeep(_query), update = _.cloneDeep(_update), options = _.cloneDeep(_options);
+        return Promise.resolve([query, update, options]).bind(this)
             .spread(this.adapter.validateUpdate)
             .spread(this.beforeUpdate)
             .spread(this.beforeSave)
@@ -331,19 +339,22 @@ BasytBaseCollection.prototype = {
             .spread(this.afterUpdate);
     },
     'delete': function base_collection_delete(_query, _options) {
-        return Promise.resolve([_query, _options]).bind(this)
+        var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
             .spread(this.beforeDelete)
             .spread(this.adapter.delete);
     },
     query: function base_collection_query(_query, _options) {
-        return Promise.resolve([_query, _options]).bind(this)
+        var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
             .spread(this.beforeQuery)
             .spread(this.adapter.query);
     },
     count: function base_collection_count(_query) {
-        return Promise.resolve(_query).bind(this)
+        var query = _.cloneDeep(_query);
+        return Promise.resolve(query).bind(this)
             .then(this.adapter.validateQuery)
             .spread(this.beforeQuery)
             .spread(this.adapter.count);
