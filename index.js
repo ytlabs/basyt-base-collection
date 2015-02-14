@@ -37,7 +37,7 @@ function BasytBaseCollection(config) {
 
     //first handle "strict" validation
     //rejects insertion and update if query includes fields undefined in configuration
-    if (config.strict === true) {
+    if (config.strict !== false) {
         var strict = {
             func: this.validateStrict,
             param: _.keys(config.attributes),
