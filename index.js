@@ -1,6 +1,7 @@
 var Promise = require('bluebird'),
-    validators = require('./validators'),
-    redis = require('redis');
+    redis = require('redis'),
+    _ = require('lodash'),
+    validators = require('./validators');
 
 
 //lodash template setup
