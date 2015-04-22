@@ -34,20 +34,9 @@ function BasytBaseCollection(config) {
         idField = this.idField,
         defaultIdField = this.storageDefaultIdField || 'id',
         projection = {},
+        embeds = {};
         relations = [];
 
-    //first handle "strict" validation
-    //rejects insertion and update if query includes fields undefined in configuration
-    if (config.strict !== false) {
-        var strict = {
-            func: this.validateStrict,
-            param: _.keys(config.attributes),
-            name: 'strict'
-        };
-        validations.insert.push(strict);
-        validations.update.setField.push(strict);
-        validations.update.setArray.push(strict);
-    }
 
     var validator = {
         func: validators.transform,
@@ -206,6 +195,10 @@ function BasytBaseCollection(config) {
             }
         }
 
+        if (properties.type === 'object') {
+            embeds[field] = properties.fields;
+        }
+
         //flag validators
         _.forEach(flagValidators, function (name) {
             if (!_.isUndefined(properties[name])) {
@@ -264,6 +257,19 @@ function BasytBaseCollection(config) {
         }
     }, this);
 
+    //first handle "strict" validation so unshift to front
+    //rejects insertion and update if query includes fields undefined in configuration
+    if (config.strict !== false) {
+        var strict = {
+            func: this.validateStrict,
+            param: [_.keys(config.attributes), embeds],
+            name: 'strict'
+        };
+        validations.insert.unshift(strict);
+        validations.update.setField.push(strict);
+        validations.update.setArray.push(strict);
+    }
+
     this.eventNames = _.isString(config.eventNames) ? [config.eventNames] : (config.eventNames || []);
     this.validations = validations;
     this.relations = relations;
@@ -305,10 +311,25 @@ BasytBaseCollection.prototype = {
         return valid;
     },
     validateStrict: function (value, param, model) {
-        //param contains model field names
-        var valid;
+        //param contains [model field names, embedded object definitions]
+        var fieldList = param[0],
+            embedObjList = param[1],
+            valid;
         _.forOwn(model, function(v, field){
-            valid = param.indexOf(field) > -1;
+            var embed = field.split('.');
+            if((embed.length > 1)) {
+                if((fieldList.indexOf(embed[0]) === -1) || (embedObjList[embed[0]] === false)){
+                    valid = false;
+                    return valid;
+                }
+                if(_.isArray(embedObjList[embed[0]])) {
+                    valid = embedObjList[embed[0]].indexOf(embed[1]) > -1;
+                    return valid;
+                }
+                valid = true;
+                return valid;
+            }
+            valid = fieldList.indexOf(field) > -1;
             return valid;
         })
         return valid;
