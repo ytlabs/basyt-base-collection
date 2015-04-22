@@ -4,6 +4,7 @@ var _ = require('lodash'),
         //types
         'string': _.isString,
         'integer': validator.isInt,
+        'decimal': validator.isFloat,
         'numeric': validator.isNumeric,
         'boolean': _.isBoolean,
         'email': validator.isEmail,
