@@ -374,9 +374,9 @@ BasytBaseCollection.prototype = {
             .spread(this.beforeQuery)
             .spread(this.adapter.query);
     },
-    count: function base_collection_count(_query) {
-        var query = _.cloneDeep(_query);
-        return Promise.resolve(query).bind(this)
+    count: function base_collection_count(_query, _options) {
+        var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        return Promise.resolve([query, options]).bind(this)
             .then(this.adapter.validateQuery)
             .spread(this.beforeQuery)
             .spread(this.adapter.count);
