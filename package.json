@@ -1,6 +1,6 @@
 {
   "name": "basyt-base-collection",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "base definition for basyt data source connections. See basyt for detailed information.",
   "keywords": [
     "basyt connection"

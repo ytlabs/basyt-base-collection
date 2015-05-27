@@ -243,12 +243,14 @@ function BasytBaseCollection(config) {
 
         //insert validator for relations
         if (!_.isUndefined(properties.entity)) {
+            var direction = (properties.owner === properties.entity) ? 'TO' : 'FROM';
+            var fieldName = (properties.owner === properties.entity) ? properties.local || 'id' : field;
             relation = {
-                field: properties.local || field,
+                field: fieldName,
                 entity: properties.entity,
                 foreign: properties.foreign,
                 required: properties.required,
-                direction: properties.owner === properties.entity ? 'TO' : 'FROM',
+                direction: direction,
                 role: properties.role || properties.entity + '_collection', //TODO there may be more than one relation without role name
                 visible: properties.visible,
                 isArray: (properties.type === 'array'),
