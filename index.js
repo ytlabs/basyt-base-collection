@@ -33,10 +33,9 @@ function BasytBaseCollection(config) {
         idFunction = this.idFunction,
         idField = this.idField,
         defaultIdField = this.storageDefaultIdField || 'id',
-        projection = {},
+        projection = {}, hidden_fields = [], visible_fields = [this.idField === '_id' ? 'id' : idField],
         embeds = {};
         relations = [];
-
 
     var validator = {
         func: validators.transform,
@@ -45,6 +44,7 @@ function BasytBaseCollection(config) {
         param: idFunction,
         mutates: true
     };
+
     validations.insert.push(validator);
     validations.update.setField.push(validator);
     validations.query.push(validator);
@@ -87,6 +87,9 @@ function BasytBaseCollection(config) {
                 validations.insert.push(validator);
                 validations.update.setField.push(validator);
             }
+
+            visible_fields.push(field);
+            projection[field] = properties.descending ? -1 : 1;
 
             return true; //done if properties is just type
         }
@@ -132,12 +135,16 @@ function BasytBaseCollection(config) {
 
         //''readable'' setup readability
         if (properties.readable === false) {
-            projection[field] = 0;
+            hidden_fields.push(field);
             validations.query.push({
                 func: validators.reject,
                 field: field,
                 name: 'reject'
             })
+        }
+        else {
+            visible_fields.push(field);
+            projection[field] = properties.descending ? -1 : 1;
         }
 
         //''writeable'' setup writeability
@@ -257,6 +264,11 @@ function BasytBaseCollection(config) {
                 transfer: properties.transfer
             };
             relations.push(relation);
+
+            if(direction === 'TO') {
+                _.remove(visible_fields, field);
+                delete projection[field];
+            }
         }
     }, this);
 
@@ -277,6 +289,8 @@ function BasytBaseCollection(config) {
     this.validations = validations;
     this.relations = relations;
     this.projection = projection;
+    this.visible_fields = visible_fields;
+    this.hidden_fields = hidden_fields;
     this.eventNames.push("entity:" + config.name);
     this.eventNames.push(idField === defaultIdField ? "entity:" + config.name + ":{{obj.id}}" : "entity:" + config.name + ":{{obj." + idField + "}}");
 }
