@@ -362,7 +362,7 @@ BasytBaseCollection.prototype = {
             .spread(this.afterCreate);
     },
     read: function base_collection_read(_query, _options, unsafe) {
-        var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        var query = _.cloneDeep(_query), options = _.cloneDeep(_options) || {};
         options.unsafe = unsafe || false;
         return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
@@ -370,7 +370,7 @@ BasytBaseCollection.prototype = {
             .spread(this.adapter.read);
     },
     update: function base_collection_update(_query, _update, _options, unsafe) {
-        var query = _.cloneDeep(_query), update = _.cloneDeep(_update), options = _.cloneDeep(_options);
+        var query = _.cloneDeep(_query), update = _.cloneDeep(_update), options = _.cloneDeep(_options) || {};
         options.unsafe = unsafe || false;
         return Promise.resolve([query, update, options]).bind(this)
             .spread(this.adapter.validateUpdate)
@@ -380,7 +380,7 @@ BasytBaseCollection.prototype = {
             .spread(this.afterUpdate);
     },
     'delete': function base_collection_delete(_query, _options, unsafe) {
-        var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        var query = _.cloneDeep(_query), options = _.cloneDeep(_options) || {};
         options.unsafe = unsafe || false;
         return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
@@ -388,7 +388,7 @@ BasytBaseCollection.prototype = {
             .spread(this.adapter.delete);
     },
     query: function base_collection_query(_query, _options, unsafe) {
-        var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        var query = _.cloneDeep(_query), options = _.cloneDeep(_options) || {};
         options.unsafe = unsafe || false;
         return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
