@@ -361,15 +361,17 @@ BasytBaseCollection.prototype = {
             .then(this.adapter.create)
             .spread(this.afterCreate);
     },
-    read: function base_collection_read(_query, _options) {
+    read: function base_collection_read(_query, _options, unsafe) {
         var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        options.unsafe = unsafe || false;
         return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
             .spread(this.beforeRead)
             .spread(this.adapter.read);
     },
-    update: function base_collection_update(_query, _update, _options) {
+    update: function base_collection_update(_query, _update, _options, unsafe) {
         var query = _.cloneDeep(_query), update = _.cloneDeep(_update), options = _.cloneDeep(_options);
+        options.unsafe = unsafe || false;
         return Promise.resolve([query, update, options]).bind(this)
             .spread(this.adapter.validateUpdate)
             .spread(this.beforeUpdate)
@@ -377,15 +379,17 @@ BasytBaseCollection.prototype = {
             .spread(this.adapter.update)
             .spread(this.afterUpdate);
     },
-    'delete': function base_collection_delete(_query, _options) {
+    'delete': function base_collection_delete(_query, _options, unsafe) {
         var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        options.unsafe = unsafe || false;
         return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
             .spread(this.beforeDelete)
             .spread(this.adapter.delete);
     },
-    query: function base_collection_query(_query, _options) {
+    query: function base_collection_query(_query, _options, unsafe) {
         var query = _.cloneDeep(_query), options = _.cloneDeep(_options);
+        options.unsafe = unsafe || false;
         return Promise.resolve([query, options]).bind(this)
             .spread(this.adapter.validateQuery)
             .spread(this.beforeQuery)
