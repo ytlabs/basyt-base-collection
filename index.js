@@ -11,7 +11,7 @@ module.exports = BasytBaseCollection;
 
 //validation properties
 var flagValidators = ['notNull'];
-var helperValidators = ['maxLength', 'minLength', 'contains', 'notContains', 'in', 'notIn', 'max', 'min', 'minLength', 'maxLength', 'regex', 'notRegex', 'after', 'before'];
+var helperValidators = ['maxLength', 'minLength', 'contains', 'notContains', 'in', 'notIn', 'max', 'min', 'regex', 'notRegex', 'after', 'before'];
 
 
 function BasytBaseCollection(config) {
@@ -33,7 +33,7 @@ function BasytBaseCollection(config) {
         idFunction = this.idFunction,
         idField = this.idField,
         defaultIdField = this.storageDefaultIdField || 'id',
-        projection = {}, hidden_fields = [], visible_fields = [this.idField === '_id' ? 'id' : idField],
+        projection = {}, hidden_fields = [], visible_fields = [this.idField === defaultIdField ? 'id' : idField],
         embeds = {};
         relations = [];
 
@@ -285,14 +285,14 @@ function BasytBaseCollection(config) {
         validations.update.setArray.push(strict);
     }
 
-    this.eventNames = _.isString(config.eventNames) ? [config.eventNames] : (config.eventNames || []);
+    this.event_channels = _.isString(config.event_channels) ? [config.event_channels] : (config.event_channels || []);
     this.validations = validations;
     this.relations = relations;
     this.projection = projection;
     this.visible_fields = visible_fields;
     this.hidden_fields = hidden_fields;
-    this.eventNames.push("entity:" + config.name);
-    this.eventNames.push(idField === defaultIdField ? "entity:" + config.name + ":{{obj.id}}" : "entity:" + config.name + ":{{obj." + idField + "}}");
+    this.event_channels.push("entity:" + config.name);
+    this.event_channels.push(idField === defaultIdField ? "entity:" + config.name + ":{{obj.id}}" : "entity:" + config.name + ":{{obj." + idField + "}}");
 }
 
 BasytBaseCollection.prototype = {

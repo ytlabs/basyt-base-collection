@@ -1,6 +1,6 @@
 {
   "name": "basyt-base-collection",
-  "version": "0.2.11",
+  "version": "0.3.0",
   "description": "base definition for basyt data source connections. See basyt for detailed information.",
   "keywords": [
     "basyt connection"
@@ -20,7 +20,7 @@
     "url": "http://github.com/kokeksibir/"
   },
   "dependencies": {
-    "validator": "^3.22.1",
+    "validator": "^4.0",
     "bluebird": "^2.9.9",
     "lodash": "^3.2.0",
     "redis": "^0.12.1"
