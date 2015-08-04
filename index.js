@@ -13,6 +13,12 @@ module.exports = BasytBaseCollection;
 var flagValidators = ['notNull'];
 var helperValidators = ['maxLength', 'minLength', 'contains', 'notContains', 'in', 'notIn', 'max', 'min', 'regex', 'notRegex', 'after', 'before'];
 
+var logger = GLOBAL.logger || {
+        info: console.log,
+        warn: console.log,
+        error: console.error
+    };
+
 
 function BasytBaseCollection(config) {
     //setup publisher for entity event notifications
@@ -78,7 +84,7 @@ function BasytBaseCollection(config) {
                 };
             }
             if (_.isUndefined(validator.func)) {
-                console.log(name + ' has unrecognized type for field ' + field + ' assumed string');
+                logger.warn(name + ' has unrecognized type for field ' + field + ' assumed string');
                 validator.func = validators.string;
                 validator.name = 'invalid';
             }
@@ -117,7 +123,7 @@ function BasytBaseCollection(config) {
             }
             else {
                 if (_.isUndefined(properties.type) || _.isUndefined(validators[properties.type])) {
-                    console.log(name + ' has undefined type for field ' + field + ' assumed string');
+                    logger.warn(name + ' has undefined type for field ' + field + ' assumed string');
                     properties.type = 'string';
                 }
                 validator = {
@@ -445,42 +451,42 @@ BasytBaseCollection.prototype = {
     // ADAPTER Defaults
     adapter: {
         create: function basyt_default_adapter_create(entity) {
-            console.log('Adapter did not implement create function');
+            logger.warn('Adapter did not implement create function');
             return this.afterSave(null, entity);
         },
         read: function basyt_default_adapter_read(query, options) {
-            console.log('Adapter did not implement read function');
+            logger.warn('Adapter did not implement read function');
             return this.afterRead(null, query, options);
         },
         update: function basyt_default_adapter_update(query, update, options) {
-            console.log('Adapter did not implement update function');
+            logger.warn('Adapter did not implement update function');
             return this.afterSave(null, update, query, options);
         },
         'delete': function basyt_default_adapter_delete(query, options) {
-            console.log('Adapter did not implement delete function');
+            logger.warn('Adapter did not implement delete function');
             return this.afterDelete(null, query, options);
         },
         query: function basyt_default_adapter_query(query, options) {
-            console.log('Adapter did not implement query function');
+            logger.warn('Adapter did not implement query function');
             return this.afterQuery(null, query, options);
         },
         count: function basyt_default_adapter_count(query) {
-            console.log('Adapter did not implement count function');
+            logger.warn('Adapter did not implement count function');
             return this.afterQuery(null, query);
         },
         drop: function basyt_default_adapter_drop() {
-            console.log('Adapter did not implement drop function');
+            logger.warn('Adapter did not implement drop function');
         },
         validateQuery: function basyt_default_adapter_validate_query(args) {
-            console.log('Adapter did not implement validate query');
+            logger.warn('Adapter did not implement validate query');
             return Promise.resolve.apply(Array.prototype.slice.call(arguments));
         },
         validateEntity: function basyt_default_adapter_validate_entity(args) {
-            console.log('Adapter did not implement validate entity');
+            logger.warn('Adapter did not implement validate entity');
             return Promise.resolve.apply(Array.prototype.slice.call(arguments));
         },
         validateUpdate: function basyt_default_adapter_validate_update(args) {
-            console.log('Adapter did not implement validate update');
+            logger.warn('Adapter did not implement validate update');
             return Promise.resolve.apply(Array.prototype.slice.call(arguments));
         }
     }
